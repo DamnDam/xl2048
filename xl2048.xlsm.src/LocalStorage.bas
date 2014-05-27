@@ -1,6 +1,10 @@
 Attribute VB_Name = "LocalStorage"
 Option Explicit
 
+Private Const emptyGrid = "!....!....!....!...."
+Private Const rowSep = "!"
+Private Const tileSep = "."
+
 Sub Save(Optional xlHidden As Object)
 Dim strRow As String, strGrid As String, I As Integer, J As Integer
 Dim isSaved As Boolean
@@ -17,9 +21,9 @@ If Game.GameOver Then
 End If
 
 For I = 1 To 4
-    strGrid = strGrid & "!"
+    strGrid = strGrid & rowSep
     For J = 1 To 4
-        strGrid = strGrid & "." & CStr(Game.Range("Playground").Cells(I, J))
+        strGrid = strGrid & tileSep & CStr(Game.Range("Playground").Cells(I, J))
     Next J
 Next I
 
@@ -42,16 +46,16 @@ Grid = GetSetting("xl2048", "2048", "Grid")
 
 If Animate Then ThisWorkbook.screenActuate 500
 
-If Grid = "" Or Grid = "!....!....!....!...." Then
+If Grid = "" Or Grid = emptyGrid Then
     Game.Protect
     ThisWorkbook.Saved = isSaved
     Application.OnTime Now, "Game.newGame"
     Exit Sub
 End If
 
-Grid = Split(Grid, "!")
+Grid = Split(Grid, rowSep)
 For I = 1 To 4
-    Row = Split(Grid(I), ".")
+    Row = Split(Grid(I), tileSep)
     For J = 1 To 4
         If Row(J) <> "" Then
             If Animate Then ThisWorkbook.screenActuate 75
