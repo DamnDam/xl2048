@@ -170,15 +170,16 @@ If Value Then
     Me.Shapes.Range(Array("GameOver")).Fill.Transparency = 1
     ThisWorkbook.screenActuate 500
     
-    For I = 100 To 0 Step -10
-        ThisWorkbook.screenActuate 10
+    For I = 100 To 0 Step -5
+        ThisWorkbook.screenActuate 5
         Me.Shapes.Range(Array("GameOver")).Fill.Transparency = 0.33 + (2 * I / 300)
         Me.Shapes.Range(Array("GameOver")).TextFrame2.TextRange.Font.Fill.Transparency = I / 100
-        If Not Range("Playground").Find("", LookIn:=xlValues) Is Nothing Then _
-            Exit Property
     Next I
 End If
 
+If Not Range("Playground").Find("", LookIn:=xlValues) Is Nothing Then _
+    Exit Property
+    
 Me.Shapes.Range(Array("Again")).Visible = Value
 
 Me.Protect
@@ -200,14 +201,15 @@ If Value Then
     Me.Shapes.Range(Array("GameWon")).Fill.Transparency = 1
     ThisWorkbook.screenActuate 500
     
-    For I = 100 To 0 Step -10
-        ThisWorkbook.screenActuate 10
+    For I = 100 To 0 Step -5
+        ThisWorkbook.screenActuate 5
         Me.Shapes.Range(Array("GameWon")).Fill.Transparency = 0.33 + (2 * I / 300)
         Me.Shapes.Range(Array("GameWon")).TextFrame2.TextRange.Font.Fill.Transparency = I / 100
-        If Range("Playground").Find(2048, LookIn:=xlValues) Is Nothing Then _
-            Exit Property
     Next I
 End If
+
+If Range("Playground").Find(2048, LookIn:=xlValues) Is Nothing Then _
+    Exit Property
 
 Me.Shapes.Range(Array("Continue")).Visible = Value
 
