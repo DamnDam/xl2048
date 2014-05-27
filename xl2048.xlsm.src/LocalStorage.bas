@@ -58,8 +58,7 @@ For I = 1 To 4
             Game.Range("Playground").Cells(I, J) = CLng(Row(J))
             Style.Apply Game.Range("Playground").Cells(I, J)
             If CLng(Row(J)) >= 2048 Then
-                Game.Continue
-                Game.Unprotect
+                Application.OnTime Now, "Game.Continue"
             End If
         End If
     Next J

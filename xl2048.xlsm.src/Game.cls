@@ -40,12 +40,12 @@ Dim firstAdd As String, findCell As Range
 Dim lOrder As Integer, lStart As Integer, lEnd As Integer
 Dim I As Integer
 
-Dim isSaved As Boolean
-isSaved = ThisWorkbook.Saved
-
 DoEvents
 If GameOver Then Exit Sub
 If GameWon Then Exit Sub
+
+Dim isSaved As Boolean
+isSaved = ThisWorkbook.Saved
 
 If Direction = toUp Or Direction = toLeft Then
     lOrder = 1
@@ -148,7 +148,10 @@ End Sub
 
 Public Sub Win(Optional xlHidden As Object)
 If mContinue Then Exit Sub
+Dim isSaved As Boolean
+isSaved = ThisWorkbook.Saved
 GameWon = True
+ThisWorkbook.Saved = isSaved
 End Sub
 
 Public Property Get GameOver() As Boolean
@@ -182,10 +185,7 @@ Me.Protect
 End Property
 
 Public Property Get GameWon() As Boolean
-Dim isSaved As Boolean
-isSaved = ThisWorkbook.Saved
 GameWon = Me.Shapes.Range(Array("GameWon")).Visible
-ThisWorkbook.Saved = isSaved
 End Property
 
 Private Property Let GameWon(Value As Boolean)
