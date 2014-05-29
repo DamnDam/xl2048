@@ -129,7 +129,7 @@ For I = 1 To popID
     Set aleaCell = Range("Playground").Find("", After:=aleaCell, LookIn:=xlValues)
 Next I
 
-ThisWorkbook.screenActuate 150
+ThisWorkbook.screenActuate 75
 
 If Rnd > 0.9 Then
     aleaCell = 4
@@ -170,15 +170,14 @@ If Value Then
     Me.Shapes.Range(Array("GameOver")).Fill.Transparency = 1
     ThisWorkbook.screenActuate 500
     
-    For I = 100 To 0 Step -5
+    For I = 100 To 0 Step -10
         ThisWorkbook.screenActuate 5
         Me.Shapes.Range(Array("GameOver")).Fill.Transparency = 0.33 + (2 * I / 300)
         Me.Shapes.Range(Array("GameOver")).TextFrame2.TextRange.Font.Fill.Transparency = I / 100
     Next I
+    If Not Range("Playground").Find("", LookIn:=xlValues) Is Nothing Then _
+        Exit Property
 End If
-
-If Not Range("Playground").Find("", LookIn:=xlValues) Is Nothing Then _
-    Exit Property
     
 Me.Shapes.Range(Array("Again")).Visible = Value
 
@@ -201,15 +200,14 @@ If Value Then
     Me.Shapes.Range(Array("GameWon")).Fill.Transparency = 1
     ThisWorkbook.screenActuate 500
     
-    For I = 100 To 0 Step -5
+    For I = 100 To 0 Step -10
         ThisWorkbook.screenActuate 5
         Me.Shapes.Range(Array("GameWon")).Fill.Transparency = 0.33 + (2 * I / 300)
         Me.Shapes.Range(Array("GameWon")).TextFrame2.TextRange.Font.Fill.Transparency = I / 100
     Next I
+    If Range("Playground").Find(2048, LookIn:=xlValues) Is Nothing Then _
+        Exit Property
 End If
-
-If Range("Playground").Find(2048, LookIn:=xlValues) Is Nothing Then _
-    Exit Property
 
 Me.Shapes.Range(Array("Continue")).Visible = Value
 
@@ -224,3 +222,4 @@ If Not emptyCell Is Nothing Then Exit Function
 
 checkGameOver = Not myTiles.Movable
 End Function
+

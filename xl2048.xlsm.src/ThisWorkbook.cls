@@ -20,10 +20,12 @@ End Enum
 
 Public Sub screenActuate(Optional Delay As Integer)
 Game.Activate
+Application.EnableEvents = False
 Application.ScreenUpdating = True
 DoEvents
-Sleep Delay
 Application.ScreenUpdating = False
+Application.EnableEvents = True
+Sleep Delay
 Game.Range("XL2048").Select
 End Sub
 
@@ -66,7 +68,7 @@ ActiveWindow.Zoom = True
 Game.Range("XL2048").Select
 Game.Protect
 
-Application.OnTime Now, "'LocalStorage.Load True'"
+Application.OnTime Now, "'LocalStorage.Load Animate:=True'"
 Me.Saved = True
 End Sub
 
