@@ -10,15 +10,18 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Public Sub Apply(Range As Range)
-Dim TCell As Range
-Set TCell = Me.UsedRange.Find(Range.Value, LookIn:=xlValues, LookAt:=xlWhole)
-
-If IsEmpty(Range) Or TCell Is Nothing Then
-    Range.Interior.Color = 14277081
-    Exit Sub
-End If
-
-Range.Interior.Color = TCell.Interior.Color
-Range.Font.Color = TCell.Font.Color
-Range.Font.Size = TCell.Font.Size
+Dim Template As Range, Cell As Range
+For Each Cell In Range.Cells
+    Set Template = Me.UsedRange.Find(Cell.Value, LookIn:=xlValues, LookAt:=xlWhole)
+    
+    If IsEmpty(Cell) Or Template Is Nothing Then
+        Cell.Interior.Color = 14277081
+        GoTo nextCell
+    End If
+    
+    Cell.Interior.Color = Template.Interior.Color
+    Cell.Font.Color = Template.Font.Color
+    Cell.Font.Size = Template.Font.Size
+nextCell:
+Next Cell
 End Sub

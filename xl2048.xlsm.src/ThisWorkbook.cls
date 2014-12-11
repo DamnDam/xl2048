@@ -9,69 +9,57 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Private Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
-
-Public Enum tDirection
-    toUp = xlUp
-    toDown = xlDown
-    toLeft = xlToLeft
-    toRight = xlToRight
-End Enum
-
-Public Sub screenActuate(Optional Delay As Integer)
-Game.Activate
-Application.EnableEvents = False
-Application.ScreenUpdating = True
-DoEvents
-Application.ScreenUpdating = False
-Application.EnableEvents = True
-Sleep Delay
-Game.Range("XL2048").Select
-End Sub
+Public Property Let Controls(Enable As Boolean)
+If Enable Then
+    Application.OnKey "{UP}", "'GameApp.doMove " & toUp & "'"
+    Application.OnKey "{DOWN}", "'GameApp.doMove " & toDown & "'"
+    Application.OnKey "{LEFT}", "'GameApp.doMove " & toleft & "'"
+    Application.OnKey "{RIGHT}", "'GameApp.doMove " & toRight & "'"
+Else
+    Application.OnKey "{UP}"
+    Application.OnKey "{DOWN}"
+    Application.OnKey "{LEFT}"
+    Application.OnKey "{RIGHT}"
+End If
+End Property
 
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
-LocalStorage.Save
+'LocalStorage.Save
 
 Application.ScreenUpdating = False
-Game.Clear
-Game.Unprotect
-Range("BestScore") = ""
-Game.Protect
+GameApp.Clear
+'Board.Unprotect
+'Range("BestScore") = ""
+'Board.Protect
 End Sub
 
 Private Sub Workbook_AfterSave(ByVal Success As Boolean)
-LocalStorage.Load
+'LocalStorage.Load
 End Sub
 
 Private Sub Workbook_Activate()
-Application.OnKey "{UP}", "'Game.doMove " & toUp & "'"
-Application.OnKey "{DOWN}", "'Game.doMove " & toDown & "'"
-Application.OnKey "{LEFT}", "'Game.doMove " & toLeft & "'"
-Application.OnKey "{RIGHT}", "'Game.doMove " & toRight & "'"
+Controls = True
 End Sub
 
 Private Sub Workbook_Deactivate()
-Application.OnKey "{UP}"
-Application.OnKey "{DOWN}"
-Application.OnKey "{LEFT}"
-Application.OnKey "{RIGHT}"
+Controls = False
 End Sub
 
 Private Sub Workbook_Open()
 Application.ScreenUpdating = False
-Game.Unprotect
-Game.ScrollArea = "A1:A1"
-Game.Activate
+'Board.Unprotect
+Board.ScrollArea = "A1:A1"
+Board.Activate
 Application.WindowState = xlMaximized
-Game.Range("A1:H8").Select
+Board.Range("A1:H8").Select
 ActiveWindow.Zoom = True
-Game.Range("XL2048").Select
-Game.Protect
+Board.Range("XL2048").Select
+'Board.Protect
 
-Application.OnTime Now, "'LocalStorage.Load Animate:=True'"
+'Application.OnTime Now, "'LocalStorage.Load Animate:=True'"
 Me.Saved = True
 End Sub
 
 Private Sub Workbook_BeforeClose(Cancel As Boolean)
-LocalStorage.Save
+'LocalStorage.Save
 End Sub
