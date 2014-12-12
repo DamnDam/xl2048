@@ -9,20 +9,6 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
-Public Property Let Controls(Enable As Boolean)
-If Enable Then
-    Application.OnKey "{UP}", "'GameApp.doMove " & toUp & "'"
-    Application.OnKey "{DOWN}", "'GameApp.doMove " & toDown & "'"
-    Application.OnKey "{LEFT}", "'GameApp.doMove " & toleft & "'"
-    Application.OnKey "{RIGHT}", "'GameApp.doMove " & toRight & "'"
-Else
-    Application.OnKey "{UP}"
-    Application.OnKey "{DOWN}"
-    Application.OnKey "{LEFT}"
-    Application.OnKey "{RIGHT}"
-End If
-End Property
-
 Private Sub Workbook_BeforeSave(ByVal SaveAsUI As Boolean, Cancel As Boolean)
 'LocalStorage.Save
 
@@ -35,14 +21,6 @@ End Sub
 
 Private Sub Workbook_AfterSave(ByVal Success As Boolean)
 'LocalStorage.Load
-End Sub
-
-Private Sub Workbook_Activate()
-Controls = True
-End Sub
-
-Private Sub Workbook_Deactivate()
-Controls = False
 End Sub
 
 Private Sub Workbook_Open()

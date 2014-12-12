@@ -45,6 +45,17 @@ Dim mContinue As Boolean
 ' Interface
 '
 '
+Private Control As IControlProvider
+Attribute Control.VB_VarHelpID = -1
+
+Private Property Get IGameManager_Control() As IControlProvider
+Set IGameManager_Control = Control
+End Property
+
+Private Property Set IGameManager_Control(ByVal RHS As IControlProvider)
+Set Control = RHS
+End Property
+
 Private Sub IGameManager_newGame()
 Application.ScreenUpdating = False
 
@@ -52,22 +63,23 @@ Clear
 
 PopNew
 PopNew
-ThisWorkbook.Controls = True
+Control.Enable = True
 End Sub
 
 Private Sub IGameManager_Continue()
 GameWon = False
 mContinue = True
 Board.updateBoard GameState
-PopNew
-ThisWorkbook.Controls = True
+Control.Enable = True
 End Sub
 
 Private Sub IGameManager_doMove(Direction As tDirection)
 Dim hasMoved As Boolean
 
-If GameOver Then Exit Sub
-If GameWon Then Exit Sub
+If GameOver Or GameWon Then
+    Control.Enable = False
+    Exit Sub
+End If
 
 Dim Vector As tVector, Iterator As tIterator, Scout As tScout
 Dim Cell As tCoordinates, Tile As Tile
@@ -113,6 +125,7 @@ GameOver = False
 GameWon = False
 Score = 0
 Board.updateBoard GameState
+Control.Enable = False
 End Sub
 
 Private Sub IGameManager_Load(GameState As tGameState)
@@ -157,7 +170,7 @@ End Function
 
 Private Function getVector(Direction As tDirection) As tVector
 Dim Val As Integer
-If Direction = toUp Or Direction = toleft Then
+If Direction = toUp Or Direction = toLeft Then
     Val = -1
 Else
     Val = 1
@@ -248,4 +261,8 @@ Private Sub addScore(ByVal Points As Long)
 Score = Score + Points
 BestScore = WorksheetFunction.Max(Score, BestScore)
 If Points = 2048 Then GameWon = True
+End Sub
+
+Private Sub Class_Terminate()
+Set Control = Nothing
 End Sub

@@ -71,7 +71,6 @@ If Value Then
 End If
     
 Shapes("btnAgain").Visible = Value
-ThisWorkbook.Controls = Not Value
 End Property
 
 Private Property Let GameWon(Value As Boolean)
@@ -93,5 +92,4 @@ If Value Then
 End If
 
 Shapes("btnContinue").Visible = Value
-ThisWorkbook.Controls = Not Value
 End Property

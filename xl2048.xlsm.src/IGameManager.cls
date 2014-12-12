@@ -9,6 +9,9 @@ Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
 
+Public Control As IControlProvider
+Attribute Control.VB_VarHelpID = -1
+
 Public Sub newGame()
 
 End Sub

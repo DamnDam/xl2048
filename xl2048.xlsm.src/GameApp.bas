@@ -14,7 +14,7 @@ End Type
 Public Enum tDirection
     toUp = xlUp
     toDown = xlDown
-    toleft = xlToLeft
+    toLeft = xlToLeft
     toRight = xlToRight
 End Enum
 
@@ -24,12 +24,23 @@ Public Type tCoordinates
 End Type
 
 Dim mManager As IGameManager
+Dim mKBController As KeyboardControl
 
 Public Property Get Manager() As IGameManager
+Dim Control As IControlProvider
 If mManager Is Nothing Then
     Set mManager = New GameManager
+    Set Control = KBController
+    Control.Register mManager
 End If
 Set Manager = mManager
+End Property
+
+Private Property Get KBController() As KeyboardControl
+If mKBController Is Nothing Then
+    Set mKBController = New KeyboardControl
+End If
+Set KBController = mKBController
 End Property
 
 Sub newGame()
@@ -40,10 +51,10 @@ Sub Continue()
 Manager.Continue
 End Sub
 
-Sub doMove(Direction As tDirection)
-Manager.doMove Direction
-End Sub
-
 Sub Clear()
 Manager.Clear
+End Sub
+
+Sub KBdoMove(Direction As tDirection)
+KBController.Callback_DoMove Direction
 End Sub
