@@ -7,82 +7,74 @@ Attribute VB_GlobalNameSpace = False
 Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
-' TODO
-#If 0 Then
 Option Explicit
 Implements IStorageProvider
 
+''
+' Private constants
+'
+'
 Private Const emptyGrid = "!....!....!....!...."
 Private Const rowSep = "!"
 Private Const tileSep = "."
 
+''
+' Interface
+'
+'
 Private Sub IStorageProvider_Save(GameState As tGameState)
-Dim strRow As String, strGrid As String, I As Integer, J As Integer
-Dim isSaved As Boolean
-isSaved = ThisWorkbook.Saved
+Dim Grid, strGrid As String, I As Integer, J As Integer
 
-SaveSetting "xl2048", "2048", "Score", CStr(Board.Range("Score"))
-SaveSetting "xl2048", "2048", "Best", CStr(Board.Range("BestScore"))
+SaveSetting "xl2048", "2048", "Score", CStr(GameState.Score)
+SaveSetting "xl2048", "2048", "Best", CStr(GameState.BestScore)
 
-If Game.GameOver Then
-    Game.Clear
-    ThisWorkbook.Saved = isSaved
+If GameState.GameOver Or GameState.Grid Is Nothing Then
+    GameApp.Clear
     SaveSetting "xl2048", "2048", "Grid", ""
     Exit Sub
 End If
 
-For I = 1 To 4
+Grid = GameState.Grid.getBoard
+For I = 1 To GRID_SIZE
     strGrid = strGrid & rowSep
-    For J = 1 To 4
-        strGrid = strGrid & tileSep & CStr(Board.Range("Playground").Cells(I, J))
+    For J = 1 To GRID_SIZE
+        strGrid = strGrid & tileSep & Grid(I, J)
     Next J
 Next I
 
 SaveSetting "xl2048", "2048", "Grid", strGrid
-
 End Sub
 
 Private Function IStorageProvider_Load() As tGameState
-Dim Row, Grid, I As Integer, J As Integer
-Dim isSaved As Boolean
-isSaved = ThisWorkbook.Saved
+Dim Row, Grid, Cell As tCoordinates
 
-Application.ScreenUpdating = False
-Game.Clear
-Board.Unprotect
+Dim GameState As tGameState
 
-Board.Range("Score") = GetSetting("xl2048", "2048", "Score")
-Board.Range("BestScore") = GetSetting("xl2048", "2048", "Best")
+Set GameState.Grid = Nothing
+Set GameState.Grid = New Grid
+
+GameState.Score = GetSetting("xl2048", "2048", "Score")
+GameState.BestScore = GetSetting("xl2048", "2048", "Best")
 Grid = GetSetting("xl2048", "2048", "Grid")
 
-If Animate Then Board.updateScreen 500
-
 If Grid = "" Or Grid = emptyGrid Then
-    Board.Protect
-    ThisWorkbook.Saved = isSaved
-    Application.OnTime Now, "Game.newGame"
+    Application.OnTime Now, "GameApp.newGame"
+    IStorageProvider_Load = GameState
     Exit Function
 End If
 
 Grid = Split(Grid, rowSep)
-For I = 1 To 4
-    Row = Split(Grid(I), tileSep)
-    For J = 1 To 4
-        If Row(J) <> "" Then
-            If Animate Then Board.updateScreen 75
-            Board.Range("Playground").Cells(I, J) = CLng(Row(J))
-            Style.Apply Board.Range("Playground").Cells(I, J)
-            If CLng(Row(J)) >= 2048 Then
-                Application.OnTime Now, "Game.Continue"
+For Cell.Top = 1 To 4
+    Row = Split(Grid(Cell.Top), tileSep)
+    For Cell.Left = 1 To 4
+        If Row(Cell.Left) <> "" Then
+            GameState.Grid.addTile Cell, CLng(Row(Cell.Left))
+            If CLng(Row(Cell.Left)) >= 2048 Then
+                GameState.Continue = True
             End If
         End If
-    Next J
-Next I
+    Next Cell.Left
+Next Cell.Top
 
-If Animate Then Board.updateScreen
-
-Board.Protect
-ThisWorkbook.Saved = isSaved
+IStorageProvider_Load = GameState
 End Function
-
-#End If

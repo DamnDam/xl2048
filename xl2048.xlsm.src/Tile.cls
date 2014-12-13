@@ -8,8 +8,17 @@ Attribute VB_Creatable = False
 Attribute VB_PredeclaredId = False
 Attribute VB_Exposed = False
 Option Explicit
- 
+
+''
+' Private members
+'
+'
 Private mCell As tCoordinates
+
+''
+' Properties
+'
+'
 Public Value As Long
 
 Public Property Get Cell() As tCoordinates

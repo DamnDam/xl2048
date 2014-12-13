@@ -9,6 +9,10 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+''
+' Public methods
+'
+'
 Public Sub updateBoard(GameState As tGameState)
 Dim isSaved As Boolean
 isSaved = ThisWorkbook.Saved
@@ -51,6 +55,10 @@ Protect
 ThisWorkbook.Saved = isSaved
 End Sub
 
+''
+' Private methods
+'
+'
 Private Property Let GameOver(Value As Boolean)
 If Shapes("lblGameOver").Visible = Value Then Exit Property
 Dim I As Integer

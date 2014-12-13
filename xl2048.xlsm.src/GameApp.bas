@@ -27,6 +27,7 @@ End Type
 
 Dim mManager As IGameManager
 Dim mKBController As KeyboardControl
+Dim mDefaultStorage As IStorageProvider
 
 Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 
@@ -47,6 +48,13 @@ End If
 Set KBController = mKBController
 End Property
 
+Private Property Get DefaultStorage() As IStorageProvider
+If mDefaultStorage Is Nothing Then
+    Set mDefaultStorage = New LocalStorage
+End If
+Set DefaultStorage = mDefaultStorage
+End Property
+
 Public Property Get Style() As Object
 Set Style = ThisWorkbook.Sheets(GRID_STYLE)
 End Property
@@ -61,6 +69,14 @@ End Sub
 
 Sub Clear()
 Manager.Clear
+End Sub
+
+Sub Save()
+DefaultStorage.Save Manager.Save()
+End Sub
+
+Sub Load()
+Manager.Load DefaultStorage.Load()
 End Sub
 
 Sub KBdoMove(Direction As tDirection)

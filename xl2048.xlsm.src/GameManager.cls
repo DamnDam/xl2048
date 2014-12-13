@@ -121,12 +121,15 @@ Board.updateBoard GameState
 Control.Enable = False
 End Sub
 
-Private Sub IGameManager_Load(GameState As tGameState)
-' TODO
+Private Sub IGameManager_Load(newGameState As tGameState)
+Set GameState.Grid = Nothing
+GameState = newGameState
+Board.updateBoard GameState
+Control.Enable = True
 End Sub
 
 Private Function IGameManager_Save() As tGameState
-' TODO
+IGameManager_Save = GameState
 End Function
 
 ''
