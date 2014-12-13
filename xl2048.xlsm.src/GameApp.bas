@@ -2,6 +2,7 @@ Attribute VB_Name = "GameApp"
 Option Explicit
 
 Public Const GRID_SIZE = 4
+Public Const GRID_STYLE = "DefaultSkin"
 
 Public Type tGameState
     Grid As Grid
@@ -43,6 +44,10 @@ If mKBController Is Nothing Then
     Set mKBController = New KeyboardControl
 End If
 Set KBController = mKBController
+End Property
+
+Public Property Get Style() As Object
+Set Style = ThisWorkbook.Sheets(GRID_STYLE)
 End Property
 
 Sub newGame()

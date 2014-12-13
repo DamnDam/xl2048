@@ -21,7 +21,7 @@ Range("Playground").Value = GameState.Grid.getBoard
 Dim Diff
 Diff = GameState.Grid.getDiff
 If Len(Diff) > 0 Then
-    Style.Apply Range("Playground").Range(Diff)
+    ApplyStyle Range("Playground").Range(Diff)
 End If
 
 Application.ScreenUpdating = True
@@ -85,6 +85,18 @@ End If
 
 Shapes("btnContinue").Visible = Value
 End Property
+
+Private Sub ApplyStyle(Range As Range)
+Dim Cell As Range, Template As Range
+
+For Each Cell In Range.Cells
+    Set Template = GameApp.Style.Range("_T" & Cell.Value)
+    
+    Cell.Interior.Color = Template.Interior.Color
+    Cell.Font.Color = Template.Font.Color
+nextCell:
+Next Cell
+End Sub
 
 Private Sub forceRefresh()
 Range("Playground").Borders.Weight = 2
