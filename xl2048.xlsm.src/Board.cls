@@ -10,6 +10,8 @@ Attribute VB_Exposed = True
 Option Explicit
 
 Public Sub updateBoard(GameState As tGameState)
+Dim isSaved As Boolean
+isSaved = ThisWorkbook.Saved
 Unprotect
 
 Application.ScreenUpdating = False
@@ -19,7 +21,7 @@ Range("BestScore") = GameState.BestScore
 Range("Playground").Value = GameState.Grid.getBoard
 
 Dim Diff
-Diff = GameState.Grid.getDiff
+Diff = GameState.Grid.getDiff()
 If Len(Diff) > 0 Then
     ApplyStyle Range("Playground").Range(Diff)
 End If
@@ -31,9 +33,12 @@ GameOver = GameState.GameOver
 GameWon = GameState.GameWon
 
 Protect
+ThisWorkbook.Saved = isSaved
 End Sub
 
 Public Sub Clear(Optional xlHidden As Object)
+Dim isSaved As Boolean
+isSaved = ThisWorkbook.Saved
 Unprotect
 Range("Playground").Interior.Color = 14277081
 Range("Playground").ClearContents
@@ -43,6 +48,7 @@ Range("Score") = ""
 GameOver = False
 GameWon = False
 Protect
+ThisWorkbook.Saved = isSaved
 End Sub
 
 Private Property Let GameOver(Value As Boolean)
@@ -103,7 +109,10 @@ Range("Playground").Borders.Weight = 2
 End Sub
 
 Private Sub Worksheet_Activate()
+Dim isSaved As Boolean
+isSaved = ThisWorkbook.Saved
 Unprotect
 Range("XL2048").Select
 Protect
+ThisWorkbook.Saved = isSaved
 End Sub
