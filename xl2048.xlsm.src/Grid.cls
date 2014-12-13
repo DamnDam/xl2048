@@ -45,14 +45,20 @@ Tiles.Remove Key(Tile.Cell)
 Set Tile = Nothing
 End Sub
 
+Public Function Count()
+Count = Tiles.Count
+End Function
+
 Public Function getBoard() As Variant
 Dim currBoard(1 To GRID_SIZE, 1 To GRID_SIZE)
 Dim Tile As Tile, I As Integer
+
 For I = 0 To Tiles.Count - 1
     Set Tile = Tiles.Items(I)
     currBoard(Tile.Cell.Top, Tile.Cell.Left) = Tile.Value
 Next I
 getBoard = currBoard
+
 End Function
 
 Public Function getDiff() As String
@@ -93,38 +99,10 @@ For I = 0 To Tiles.Count - 1
 Next I
 End Function
 
-Public Function getRandomEmptyCell() As tCoordinates
-Dim RndCell As Integer, Cells As Collection, NoTile As Tile
-Set Cells = EmptyCells()
-RndCell = Int(Rnd * Cells.Count) + 1
-Set NoTile = Cells(RndCell)
-getRandomEmptyCell = NoTile.Cell
-For Each NoTile In Cells
-    Set NoTile = Nothing
-Next NoTile
-Set Cells = Nothing
-End Function
-
 ''
 ' Private methods
 '
 '
-Private Function EmptyCells() As Collection
-Dim Cell As tCoordinates, Tile As Tile
-Set EmptyCells = New Collection
-With Cell
-    For .Top = 1 To GRID_SIZE
-        For .Left = 1 To GRID_SIZE
-            If Not hasTile(Cell) Then
-                Set Tile = New Tile
-                Tile.Cell = Cell
-                EmptyCells.Add Tile
-            End If
-        Next .Left
-    Next .Top
-End With
-End Function
-
 Private Function Key(Coordinates As tCoordinates) As String
 Key = Coordinates.Top & "." & Coordinates.Left
 End Function

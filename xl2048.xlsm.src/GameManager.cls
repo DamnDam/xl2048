@@ -39,7 +39,7 @@ Private Score As Long
 Private BestScore As Long
 Private GameWon As Boolean
 Private GameOver As Boolean
-Dim mContinue As Boolean
+Private mContinue As Boolean
 
 ''
 ' Interface
@@ -68,6 +68,7 @@ End Sub
 
 Private Sub IGameManager_Continue()
 GameWon = False
+GameOver = False
 mContinue = True
 Board.updateBoard GameState
 Control.Enable = True
@@ -106,14 +107,11 @@ Do While nextCell(Iterator, Cell)
     End If
 Loop
 
-If GameWon Then
-    Board.updateBoard GameState
-ElseIf hasMoved Then
-    Board.updateBoard GameState
+Board.updateBoard GameState
+
+If hasMoved Then
     PopNew
-Else
-    GameOver = checkGameOver()
-    Board.updateBoard GameState
+    checkGameOver
 End If
 End Sub
 
@@ -151,7 +149,7 @@ End Property
 Private Sub PopNew()
 Dim popCell As tCoordinates, Value As Long
 
-popCell = Grid.getRandomEmptyCell()
+popCell = getRandomEmptyCell()
 
 If Rnd > 0.9 Then
     Value = 4
@@ -160,13 +158,20 @@ Else
 End If
 
 Grid.addTile popCell, Value
-Board.updateScreen 15
+
+Sleep 100
 Board.updateBoard GameState
 End Sub
 
 Private Function checkGameOver() As Boolean
 ' TODO
 End Function
+
+Private Sub addScore(ByVal Points As Long)
+Score = Score + Points
+BestScore = WorksheetFunction.Max(Score, BestScore)
+If Points = 2048 Then GameWon = True
+End Sub
 
 Private Function getVector(Direction As tDirection) As tVector
 Dim Val As Integer
@@ -247,6 +252,24 @@ With testCell
 End With
 End Function
 
+Private Function getRandomEmptyCell() As tCoordinates
+Dim NbEmpty As Integer, RndCell As Integer
+NbEmpty = GRID_SIZE * GRID_SIZE - Grid.Count
+RndCell = Int(Rnd * NbEmpty) + 1
+Dim Cell As tCoordinates
+Do
+    Cell.Left = Cell.Left + 1
+    If Not inGridBoundaries(Cell) Then
+        Cell.Left = 1
+        Cell.Top = Cell.Top + 1
+    End If
+    If Not Grid.hasTile(Cell) Then
+        RndCell = RndCell - 1
+    End If
+Loop Until RndCell = 0
+getRandomEmptyCell = Cell
+End Function
+
 Private Function inGridBoundaries(Cell As tCoordinates) As Boolean
 With Cell
     inGridBoundaries = .Top >= 1 And .Top <= GRID_SIZE And .Left >= 1 And .Left <= GRID_SIZE
@@ -257,12 +280,7 @@ Private Function positionsEqual(Cell1 As tCoordinates, Cell2 As tCoordinates) As
 positionsEqual = Cell1.Top = Cell2.Top And Cell1.Left = Cell2.Left
 End Function
 
-Private Sub addScore(ByVal Points As Long)
-Score = Score + Points
-BestScore = WorksheetFunction.Max(Score, BestScore)
-If Points = 2048 Then GameWon = True
-End Sub
-
 Private Sub Class_Terminate()
 Set Control = Nothing
+Set Grid = Nothing
 End Sub

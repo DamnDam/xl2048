@@ -33,7 +33,7 @@ Private Property Let IControlProvider_Enable(Enable As Boolean)
 If Enable Then
     Application.OnKey "{UP}", "'GameApp.KBdoMove " & toUp & "'"
     Application.OnKey "{DOWN}", "'GameApp.KBdoMove " & toDown & "'"
-    Application.OnKey "{LEFT}", "'GameApp.KBdoMove " & toleft & "'"
+    Application.OnKey "{LEFT}", "'GameApp.KBdoMove " & toLeft & "'"
     Application.OnKey "{RIGHT}", "'GameApp.KBdoMove " & toRight & "'"
 Else
     Application.OnKey "{UP}"

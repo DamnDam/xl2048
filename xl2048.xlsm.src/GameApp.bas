@@ -26,6 +26,8 @@ End Type
 Dim mManager As IGameManager
 Dim mKBController As KeyboardControl
 
+Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
+
 Public Property Get Manager() As IGameManager
 Dim Control As IControlProvider
 If mManager Is Nothing Then

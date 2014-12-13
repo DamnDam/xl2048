@@ -9,15 +9,30 @@ Attribute VB_PredeclaredId = True
 Attribute VB_Exposed = True
 Option Explicit
 
+Dim StyleCache As Dictionary
+
+Private Property Get getTemplate(Value As Variant) As Range
+Dim Template As Range
+If StyleCache Is Nothing Then
+    Set StyleCache = New Dictionary
+    For Each Template In UsedRange.Cells
+        If Not IsEmpty(Template) Then
+            StyleCache.Add Template.Value, Template
+        End If
+    Next Template
+End If
+If Not StyleCache.Exists(Value) Then
+    Set getTemplate = StyleCache("[0]")
+Else
+    Set getTemplate = StyleCache(Value)
+End If
+End Property
+
 Public Sub Apply(Range As Range)
-Dim Template As Range, Cell As Range
+Dim Cell As Range, Template As Range
+
 For Each Cell In Range.Cells
-    Set Template = Me.UsedRange.Find(Cell.Value, LookIn:=xlValues, LookAt:=xlWhole)
-    
-    If IsEmpty(Cell) Or Template Is Nothing Then
-        Cell.Interior.Color = 14277081
-        GoTo nextCell
-    End If
+    Set Template = getTemplate(Cell.Value)
     
     Cell.Interior.Color = Template.Interior.Color
     Cell.Font.Color = Template.Font.Color
