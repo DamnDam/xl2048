@@ -45,11 +45,11 @@ Tiles.Remove Key(Tile.Cell)
 Set Tile = Nothing
 End Sub
 
-Public Function Count()
+Public Property Get Count()
 Count = Tiles.Count
-End Function
+End Property
 
-Public Function getBoard() As Variant
+Public Property Get getBoard() As Variant
 Dim currBoard(1 To GRID_SIZE, 1 To GRID_SIZE)
 Dim Tile As Tile, I As Integer
 
@@ -59,7 +59,7 @@ For I = 0 To Tiles.Count - 1
 Next I
 getBoard = currBoard
 
-End Function
+End Property
 
 Public Function getDiff() As String
 Dim Tile As Tile, oldTile As Tile, I As Integer

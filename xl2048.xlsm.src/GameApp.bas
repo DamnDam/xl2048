@@ -8,6 +8,7 @@ Public Type tGameState
     Grid As Grid
     Score As Long
     BestScore As Long
+    Continue As Boolean
     GameOver As Boolean
     GameWon As Boolean
 End Type

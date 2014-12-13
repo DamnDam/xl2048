@@ -34,12 +34,7 @@ End Type
 ' Members
 '
 '
-Private Grid As Grid
-Private Score As Long
-Private BestScore As Long
-Private GameWon As Boolean
-Private GameOver As Boolean
-Private mContinue As Boolean
+Private GameState As tGameState
 
 ''
 ' Interface
@@ -67,9 +62,9 @@ Control.Enable = True
 End Sub
 
 Private Sub IGameManager_Continue()
-GameWon = False
-GameOver = False
-mContinue = True
+If GameState.GameWon Then GameState.Continue = True
+GameState.GameWon = False
+GameState.GameOver = False
 Board.updateBoard GameState
 Control.Enable = True
 End Sub
@@ -77,7 +72,7 @@ End Sub
 Private Sub IGameManager_doMove(Direction As tDirection)
 Dim hasMoved As Boolean
 
-If GameOver Or GameWon Then
+If GameState.GameOver Or GameState.GameWon Then
     Control.Enable = False
     Exit Sub
 End If
@@ -89,19 +84,19 @@ Vector = getVector(Direction)
 Iterator = buildIterator(Vector)
 
 Do While nextCell(Iterator, Cell)
-    If Grid.hasTile(Cell) Then
-        Set Tile = Grid.getTile(Cell)
+    If GameState.Grid.hasTile(Cell) Then
+        Set Tile = GameState.Grid.getTile(Cell)
         Scout = getScout(Cell, Vector)
         If Not Scout.Next Is Nothing Then
             If Tile.Value = Scout.Next.Value Then
                 Tile.Value = Tile.Value + Scout.Next.Value
                 addScore Tile.Value
-                Grid.delTile Scout.Next
+                GameState.Grid.delTile Scout.Next
                 hasMoved = True
             End If
         End If
         If Not positionsEqual(Tile.Cell, Scout.Farthest) Then
-            Grid.moveTile Tile, Scout.Farthest
+            GameState.Grid.moveTile Tile, Scout.Farthest
             hasMoved = True
         End If
     End If
@@ -116,12 +111,12 @@ End If
 End Sub
 
 Private Sub IGameManager_Clear()
-Set Grid = Nothing
-Set Grid = New Grid
-mContinue = False
-GameOver = False
-GameWon = False
-Score = 0
+Set GameState.Grid = Nothing
+Set GameState.Grid = New Grid
+GameState.Continue = False
+GameState.GameOver = False
+GameState.GameWon = False
+GameState.Score = 0
 Board.updateBoard GameState
 Control.Enable = False
 End Sub
@@ -138,14 +133,6 @@ End Function
 ' Private methods
 '
 '
-Private Property Get GameState() As tGameState
-Set GameState.Grid = Grid
-GameState.Score = Score
-GameState.BestScore = BestScore
-GameState.GameOver = GameOver
-GameState.GameWon = GameWon
-End Property
-
 Private Sub PopNew()
 Dim popCell As tCoordinates, Value As Long
 
@@ -157,14 +144,14 @@ Else
     Value = 2
 End If
 
-Grid.addTile popCell, Value
+GameState.Grid.addTile popCell, Value
 
 Sleep 100
 Board.updateBoard GameState
 End Sub
 
 Public Sub checkGameOver()
-If Grid.Count < GRID_SIZE * GRID_SIZE Then Exit Sub
+If GameState.Grid.Count < GRID_SIZE * GRID_SIZE Then Exit Sub
 
 Dim Iterator As tIterator, leftV As tVector, upV As tVector
 leftV = getVector(toLeft)
@@ -174,7 +161,7 @@ Iterator = buildIterator(upV)
 Dim Cell As tCoordinates, Tile As Tile, nextTile As Tile
 
 Do While nextCell(Iterator, Cell)
-    Set Tile = Grid.getTile(Cell)
+    Set Tile = GameState.Grid.getTile(Cell)
     Set nextTile = getScout(Cell, upV).Next
     If Not nextTile Is Nothing Then
         If Tile.Value = nextTile.Value Then
@@ -189,14 +176,14 @@ Do While nextCell(Iterator, Cell)
     End If
 Loop
 
-GameOver = True
+GameState.GameOver = True
 Board.updateBoard GameState
 End Sub
 
 Private Sub addScore(ByVal Points As Long)
-Score = Score + Points
-BestScore = WorksheetFunction.Max(Score, BestScore)
-If Points = 2048 Then GameWon = True
+GameState.Score = GameState.Score + Points
+GameState.BestScore = WorksheetFunction.Max(GameState.Score, GameState.BestScore)
+If Points = 2048 And Not GameState.Continue Then GameState.GameWon = True
 End Sub
 
 Private Function getVector(Direction As tDirection) As tVector
@@ -258,8 +245,8 @@ Do
     .Top = .Top - Vector.Top
     .Left = .Left - Vector.Left
     If Not inGridBoundaries(testCell) Then Exit Do
-    If Grid.hasTile(testCell) Then
-        Set getScout.Next = Grid.getTile(testCell)
+    If GameState.Grid.hasTile(testCell) Then
+        Set getScout.Next = GameState.Grid.getTile(testCell)
         Exit Do
     End If
 Loop
@@ -272,7 +259,7 @@ With testCell
         .Top = .Top + Vector.Top
         .Left = .Left + Vector.Left
         If Not inGridBoundaries(testCell) Then Exit Do
-        If Grid.hasTile(testCell) Then Exit Do
+        If GameState.Grid.hasTile(testCell) Then Exit Do
         getScout.Farthest = testCell
     Loop
 End With
@@ -280,7 +267,7 @@ End Function
 
 Private Function getRandomEmptyCell() As tCoordinates
 Dim NbEmpty As Integer, RndCell As Integer
-NbEmpty = GRID_SIZE * GRID_SIZE - Grid.Count
+NbEmpty = GRID_SIZE * GRID_SIZE - GameState.Grid.Count
 RndCell = Int(Rnd * NbEmpty) + 1
 Dim Cell As tCoordinates
 Do
@@ -289,7 +276,7 @@ Do
         Cell.Left = 1
         Cell.Top = Cell.Top + 1
     End If
-    If Not Grid.hasTile(Cell) Then
+    If Not GameState.Grid.hasTile(Cell) Then
         RndCell = RndCell - 1
     End If
 Loop Until RndCell = 0
@@ -308,5 +295,5 @@ End Function
 
 Private Sub Class_Terminate()
 Set Control = Nothing
-Set Grid = Nothing
+Set GameState.Grid = Nothing
 End Sub
