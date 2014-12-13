@@ -163,9 +163,35 @@ Sleep 100
 Board.updateBoard GameState
 End Sub
 
-Private Function checkGameOver() As Boolean
-' TODO
-End Function
+Public Sub checkGameOver()
+If Grid.Count < GRID_SIZE * GRID_SIZE Then Exit Sub
+
+Dim Iterator As tIterator, leftV As tVector, upV As tVector
+leftV = getVector(toLeft)
+upV = getVector(toUp)
+Iterator = buildIterator(upV)
+
+Dim Cell As tCoordinates, Tile As Tile, nextTile As Tile
+
+Do While nextCell(Iterator, Cell)
+    Set Tile = Grid.getTile(Cell)
+    Set nextTile = getScout(Cell, upV).Next
+    If Not nextTile Is Nothing Then
+        If Tile.Value = nextTile.Value Then
+            Exit Sub
+        End If
+    End If
+    Set nextTile = getScout(Cell, leftV).Next
+    If Not nextTile Is Nothing Then
+        If Tile.Value = nextTile.Value Then
+            Exit Sub
+        End If
+    End If
+Loop
+
+GameOver = True
+Board.updateBoard GameState
+End Sub
 
 Private Sub addScore(ByVal Points As Long)
 Score = Score + Points
