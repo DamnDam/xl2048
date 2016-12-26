@@ -53,8 +53,12 @@ Dim GameState As tGameState
 Set GameState.Grid = Nothing
 Set GameState.Grid = New Grid
 
-GameState.Score = GetSetting("xl2048", "2048", "Score")
-GameState.BestScore = GetSetting("xl2048", "2048", "Best")
+Dim ScoreStr As String
+
+ScoreStr = GetSetting("xl2048", "2048", "Score")
+If IsNumeric(ScoreStr) Then GameState.Score = CLng(ScoreStr)
+ScoreStr = GetSetting("xl2048", "2048", "Best")
+If IsNumeric(ScoreStr) Then GameState.BestScore = CLng(ScoreStr)
 Grid = GetSetting("xl2048", "2048", "Grid")
 
 If Grid = "" Or Grid = emptyGrid Then
